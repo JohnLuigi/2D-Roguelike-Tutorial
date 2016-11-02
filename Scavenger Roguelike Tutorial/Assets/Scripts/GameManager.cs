@@ -11,6 +11,10 @@ public class GameManager : MonoBehaviour {
 
     public BoardManager boardScript;        // the reference to the Board Manager that will be used further below
 
+    public int playerFoodPoints = 100;      // the food value that will decrease over time and be increased by picking up food objects
+    [HideInInspector]
+    public bool playersTurn = true;     // the [HideInInspector] makes the variable not appear in the inspecter in unity
+
     private int level = 3;  // start using 3 to test level 3 since that is the first level where enemies appear
 
 	// Use this for initialization
@@ -33,6 +37,11 @@ public class GameManager : MonoBehaviour {
     {
         boardScript.SetupScene(level);      // pass in the parameter level (using 3 for initial test) to setup the board using the
                                             // SetupScene function from the boardManager script
+    }
+
+    public void GameOver()
+    {
+        enabled = false;        // when the game ends, the GameManager is disabled
     }
 	
 	// Update is called once per frame
