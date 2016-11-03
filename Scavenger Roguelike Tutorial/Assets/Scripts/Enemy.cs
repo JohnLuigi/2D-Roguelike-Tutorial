@@ -6,6 +6,8 @@ using System.Collections;
 public class Enemy : MovingObject {
 
     public int playerDamage;        // this is the number of food points that will be subtracted when the enemy attacks the player
+                                    // enemy1 will do 10 damage, and enemy2 will do 20 damage
+                                    // this will give us a stronger and a weaker enemy to keep things more interesting
 
     private Animator animator;      // the animator that will control the enemy
     private Transform target;       // will store the player's position here, the enemy will try to move towards this, aka the player
@@ -14,6 +16,7 @@ public class Enemy : MovingObject {
 	// add protected override to use a different implementation than that of MovingObject
 	protected override void Start () {
 
+        GameManager.instance.AddEnemyToList(this);      // have this enemy add itself to the list of enemies in the GameManager
         animator = GetComponent<Animator>();        // get and store a component reference to our animator
         target = GameObject.FindGameObjectWithTag("Player").transform;      // store a reference of the player's location that is part of its transform
         base.Start();       // call the start function of hte base class, MovingObject
@@ -70,6 +73,9 @@ public class Enemy : MovingObject {
     protected override void OnCantMove <T> (T component)
     {
         Player hitPlayer = component as Player;     // this will be the passed in component which we will cast to a player class
+
+        // use setTrigger to set the enemy attack trigger in the animator controller when it collides with the player
+        animator.SetTrigger("enemyAttack");
 
         // call the lose food function from the Player class with the playerDamage from above to subtract the amount of food points from the player
         hitPlayer.LoseFood(playerDamage);
