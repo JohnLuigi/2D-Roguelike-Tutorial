@@ -39,6 +39,7 @@ public class Enemy : MovingObject {
         skipMove = true;        // since the enemy moved, set skip move to true so on the next turn the enemy cannot move
     }
 
+    // Example of a character movement function
     // this is going to be called by the GameManager when it issues the order to move to each of the enemies in the Enemies list
     public void MoveEnemy()
     {
@@ -67,6 +68,7 @@ public class Enemy : MovingObject {
         AttemptMove<Player>(xDir, yDir);        // try to move towards the player by passing in the Player as the parameter
     }
 
+    // example of setting an animation trigger upon a condition
     // OnCantMove is called if the enemy attempts to move into a space occupied by the player
     // it overrides the OnCantMove function of MovingObject, which was implemented as abstract (aka only implemented by its child class)
     // it takes in the generic parameter T which we use to pass in the component we expect to encounter, which in this case is the player object

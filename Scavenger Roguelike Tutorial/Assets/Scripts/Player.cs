@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;       // this namespace declaration will allow us to modify the foodText Text UI object
+using UnityEngine.SceneManagement;      // this will allow us to use the SceneManager to load a level instead of application.loadlevel
 
 // This class will inherit from the MovingObject class instead of the default MonoBehaviour
 // This is done by changing 'public class Player : MonoBehaviour' to 'public class Player : MovingObject'
@@ -12,6 +14,9 @@ public class Player : MovingObject {
     public int pointsPerSoda = 20;
 
     public float restartLevelDelay = 1f;
+
+    public Text foodText;       // reference to the food text UI object
+
     private Animator animator;      // this will store a reference to our animator component
 
     private int food;       // this will store the player's score during the level before passing it back to the GameManager as we change levels
@@ -25,6 +30,9 @@ public class Player : MovingObject {
         food = GameManager.instance.playerFoodPoints;       // set food to be the value stored in GameManager
                                                             // this is so that the Player script can manage the food score during a level
                                                             // and then store it in the GameManager as we change levels
+
+        foodText.text = "Food: " + food;        // set the value of foodText to the current food score
+
         base.Start();       // call the start function of the base class, MovingObject            
 	}
 
@@ -69,6 +77,7 @@ public class Player : MovingObject {
     protected override void AttemptMove <T> (int xDir, int yDir)
     {
         food--;     // every time the player moves, one food point is lost
+        foodText.text = "Food: " + food;        // update the food score
 
         base.AttemptMove<T>(xDir, yDir);    // call AttemptMove from the base class
 
@@ -94,11 +103,13 @@ public class Player : MovingObject {
         else if (other.tag == "Food")       // if the collided object is food:
         {
             food += pointsPerFood;      // add food points to the food score
+            foodText.text = "+" + pointsPerFood + " Food: " + food;     // show the picking up of food as an increase in food points
             other.gameObject.SetActive(false);      // set the food object to be inactive after "picking it up"
         }
         else if (other.tag == "Soda")
         {
             food += pointsPerSoda;      // add points to the food score
+            foodText.text = "+" + pointsPerSoda + " Food: " + food;     // show the picking up of soda as an increase in food points
             other.gameObject.SetActive(false);      // set the soda object to be inactive after using it
         }
 
@@ -117,11 +128,11 @@ public class Player : MovingObject {
     private void Restart()
     {
         // the obsolete code from Unity <5.3 is:
-        Application.LoadLevel(Application.loadedLevel);
+        //Application.LoadLevel(Application.loadedLevel);
         // this reloads the current level
 
         // instead we use the new syntax:
-        //SceneManager.LoadScene(0);
+        SceneManager.LoadScene(0);
     }
 
     // this is called when an enemy attacks the player, loss specifies how many points the player will lose
@@ -130,6 +141,7 @@ public class Player : MovingObject {
         // first, set the playerHit trigger in our animator
         animator.SetTrigger("playerHit");
         food -= loss;       // take away from the player's food total
+        foodText.text = "-" + loss + " Food: " + food;      // show the loss of food as a minus next to the food score
         CheckIfGameOver();      // check if the game is over because the player has lost food, so maybe the game has ended
     }
 
