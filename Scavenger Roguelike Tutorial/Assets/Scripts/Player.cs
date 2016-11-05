@@ -17,6 +17,15 @@ public class Player : MovingObject {
 
     public Text foodText;       // reference to the food text UI object
 
+    // the various sound effects that are going to be played throughout the game
+    public AudioClip moveSound1;
+    public AudioClip moveSound2;
+    public AudioClip eatSound1;
+    public AudioClip eatSound2;
+    public AudioClip drinkSound1;
+    public AudioClip drinkSound2;
+    public AudioClip gameOverSound;
+
     private Animator animator;      // this will store a reference to our animator component
 
     private int food;       // this will store the player's score during the level before passing it back to the GameManager as we change levels
@@ -83,6 +92,14 @@ public class Player : MovingObject {
 
         RaycastHit2D hit;       // this will allow us to reference the result of the LineCast done in Move
 
+        // check if move returns true, aka the player was able to move
+        if(Move(xDir, yDir, out hit))
+        {
+            // example of using a comma separated list for an array as a parameter for a function
+            // because we set up RandomizeSfx using the params keyword, we can input the clips as a comma separated list into the clips array
+            SoundManager.instance.RandomizeSfx(moveSound1, moveSound2);     // play one of the two move sounds randomly upon moving
+        }
+
         // since the player has lost food points by moving, we are going to check if the game has ended
         CheckIfGameOver();
 
@@ -104,12 +121,14 @@ public class Player : MovingObject {
         {
             food += pointsPerFood;      // add food points to the food score
             foodText.text = "+" + pointsPerFood + " Food: " + food;     // show the picking up of food as an increase in food points
+            SoundManager.instance.RandomizeSfx(eatSound1, eatSound2);   // play one of the two eat sound effects randomly
             other.gameObject.SetActive(false);      // set the food object to be inactive after "picking it up"
         }
         else if (other.tag == "Soda")
         {
             food += pointsPerSoda;      // add points to the food score
             foodText.text = "+" + pointsPerSoda + " Food: " + food;     // show the picking up of soda as an increase in food points
+            SoundManager.instance.RandomizeSfx(drinkSound1, drinkSound2);   // play one of the two drink sound effects randomly
             other.gameObject.SetActive(false);      // set the soda object to be inactive after using it
         }
 
@@ -149,6 +168,10 @@ public class Player : MovingObject {
     private void CheckIfGameOver()
     {
         if (food <= 0)
-            GameManager.instance.GameOver();        // if we reached the game ending condition, call GameOver from the GameManager
+        {
+            SoundManager.instance.PlaySingle(gameOverSound);        // play the game over sound once
+            SoundManager.instance.musicSource.Stop();       // stop the looping music playing on our music source
+            GameManager.instance.GameOver();        // if we reached the game ending condition, call GameOver from the GameManager            
+        }
     }
 }

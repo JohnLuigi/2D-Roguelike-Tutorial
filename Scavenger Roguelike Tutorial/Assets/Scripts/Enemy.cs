@@ -13,6 +13,10 @@ public class Enemy : MovingObject {
     private Transform target;       // will store the player's position here, the enemy will try to move towards this, aka the player
     private bool skipMove;          // this will cause the enemy to move every other turn as opposed to every turn
 
+    // references to the two audio clips for the enemies to use when attacking the player
+    public AudioClip enemyAttack1;
+    public AudioClip enemyAttack2;
+
 	// add protected override to use a different implementation than that of MovingObject
 	protected override void Start () {
 
@@ -78,6 +82,8 @@ public class Enemy : MovingObject {
 
         // use setTrigger to set the enemy attack trigger in the animator controller when it collides with the player
         animator.SetTrigger("enemyAttack");
+
+        SoundManager.instance.RandomizeSfx(enemyAttack1, enemyAttack2);     // randomly chose one one of the two sound effects and play it
 
         // call the lose food function from the Player class with the playerDamage from above to subtract the amount of food points from the player
         hitPlayer.LoseFood(playerDamage);
