@@ -30,8 +30,15 @@ public class Player : MovingObject {
 
     private int food;       // this will store the player's score during the level before passing it back to the GameManager as we change levels
 
-	// We add the keywords protected and override because we are going to have a different implementation for Start() in the player class than...
-    // ... we have in the Moving Object class
+    // touchscreen code
+    private Vector2 touchOrigin = -Vector2.one;     // this will record where the player's finger started touching the touchscreen
+                                                    // it is initialized to -Vector2.one which is a position off the screen
+                                                    // this means that the conditional that is is going to check and see if there has been any..
+                                                    // .. touch input will initally evaluate to false until there is actually a touch input to change..
+                                                    // ..touchOrigin
+
+	// We add the keywords protected and override because we are going to have a different implementation for Start() in the player class than..
+    // .. we have in the Moving Object class
 	protected override void Start ()
     {
         animator = GetComponent<Animator>();        //get a reference to our Animator component
@@ -64,15 +71,60 @@ public class Player : MovingObject {
         int horizontal = 0;
         int vertical = 0;
 
+        // example of coding for multiple platforms 
+        // check the platform that it is running on, and react accordingly
+        // if the game is being run as a standalone or as a webplayer, use the keyboard controls
+        // change the next line to #if UNITY_STANDALONE || UNITY_WEBPLAYER to use it with a plugged in Unity Remote device (remove UNITY_EDITOR)
+    #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBPLAYER
+
         // get some input from the input manager, cast it form a float to an integer, and store it in our horizontal/vertical variable we declared
+        // this will be input from the keyboard specifically
         horizontal = (int)Input.GetAxisRaw("Horizontal");
         vertical = (int)Input.GetAxisRaw("Vertical");       // this will allow us to use this with keyboard and later on touch screen input
 
         // check if we are moving horizontally, and if so, set vertical to 0
         // this is to we are constrained to moving on a grid one direction at a time
-        // prevents the player from moving diagonally
+        // prevents the player from moving diagonallys
         if (horizontal != 0)
             vertical = 0;
+        // end of the keyboard-based code
+    #else   // the code for other platforms, aka iPhone, android, windows phone
+            // example of touch input code
+
+        if (Input.touchCount > 0)       // if the input system has registered one or more touches,
+        {
+            Touch myTouch = Input.touches[0];       // store the first touch detected in the variable of type Touch in myTouch
+                                                    // we are grabbing the first touch and ignoring all other touches in this case because the..
+                                                    // .. game is oonly going to support a single finger swiping in the cardinal directions
+
+            // check the phase of that first touch and make sure it is equal to Began so that we can
+            // determine that this is the beginning of a touch on the screen
+            if (myTouch.phase == TouchPhase.Began)      
+            {
+                touchOrigin = myTouch.position;     // if this is the beginning of a touch on the screen, set the touchOrigin Vector2 to be the position
+                                                    // of this first touch
+            }
+            // since we initialzed touchOrigin to -1, we can now check if we had a touch that ended (meaning the finger lifted off the screen)
+            // and if the touchOrigin.x is >= 0, meaning that it is inside the bound of the screen and has changed from the value we initialized it to when
+            // we declared it and that it has ended
+            else if (myTouch.phase == TouchPhase.Ended && touchOrigin.x >= 0)
+            {
+                Vector2 touchEnd = myTouch.position;        // create a vector2 that has myTouch's position
+                float x = touchEnd.x - touchOrigin.x;       // calculate the difference between the beginning and end of the touch on the x axis
+                                                            // which will give us a direction to move in
+                float y = touchEnd.y - touchOrigin.y;       // calculate the difference between the start and end of the touch to get the y direction
+                touchOrigin.x = -1;     // set touchOrigin to -1 so the conditional does not repeatedly evaluate to true
+                                        // this is off screen, so it cannot be linked to any other touches
+
+                // now we have to determine if the user's touch swipe was generally more horizontal or vertical to choose one direction
+                if (Mathf.Abs(x) > Mathf.Abs(y))        // if the x change in direction is greater than the y,
+                    horizontal = x > 0 ? 1 : -1;        // if the change is positive(right), set horiontal to one, else the direction was left so make it -1
+                else        // if the swipe was more vertical, aka the change in y was greater than the change in x,
+                    vertical = y > 0 ? 1 : -1;      // set the vertical change to be up if the swipe difference is position, and down if negative
+            }
+        }
+
+    #endif      // end of the mobile code
 
         // check if we have a non-zero value for horizontal or vertical
         // if we do, meaning we are attempting to move, call the AttemptMove function
