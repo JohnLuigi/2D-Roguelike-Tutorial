@@ -77,6 +77,7 @@ public class Player : MovingObject {
         // change the next line to #if UNITY_STANDALONE || UNITY_WEBPLAYER to use it with a plugged in Unity Remote device (remove UNITY_EDITOR)
     #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBPLAYER
 
+        // example of using arrows as a contrl scheme
         // get some input from the input manager, cast it form a float to an integer, and store it in our horizontal/vertical variable we declared
         // this will be input from the keyboard specifically
         horizontal = (int)Input.GetAxisRaw("Horizontal");
