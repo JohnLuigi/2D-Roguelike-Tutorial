@@ -51,10 +51,18 @@ public class Enemy : MovingObject {
         int xDir = 0;
         int yDir = 0;
 
+        // set a value to choose whether the enemy will try to move up or down first randomly
+        int chooseDir = 0;
+        // this random integer assignment will return 0 or 1
+        chooseDir = Random.Range(0, 2);     // if it is 0, try vertical movement first, if 1, try horizontal movement first
+                                            // without this, the enemies will only move horizontally and never attempt vertical movement
+                                            // Can increase the range so that it's less likely for enemies to try to move, can make it so they only try
+                                            // to move if chooseDir is 0 out of 4 or so
+
         // we will check the position of the player (target) against the current position of this enemy and figure out which direction to move in
         // if the difference between the x coordinate of target's position and the x coordinate of the enemy's position is less than Epsilon (in this
-        // case a number close to 0), aka if the player and enemy are in the same column
-        if(Mathf.Abs(target.position.x - transform.position.x) < float.Epsilon)
+        // case a number close to 0), aka if the player and enemy are in the same column        
+        if (Mathf.Abs(target.position.x - transform.position.x) < float.Epsilon)    // if they are in the same column
         {
             // if the enemy and player are in the same column, we are going to check if the y coordinate of the player is greater than the
             // y coordinate of the enemy's transform position
@@ -63,11 +71,26 @@ public class Enemy : MovingObject {
                                                                             // if it evaluates to false, it sets the y direction to -1
         }
         // if the player and enemy are NOT in the same column, move towards the player's column
-        else        
+        else if(Mathf.Abs(target.position.y - transform.position.y) < float.Epsilon)    // if they are in the same row
         {
             xDir = target.position.x > transform.position.x ? 1 : -1;       // if the player is to the right of the enemy, set the enemy x direction to 1
                                                                             // if the player is to the left of the enemy, set the x direction to -1
         }
+        else        // the enemy is diagonal to the player, so randomly choose to move up or down
+        {
+            // if this makes enemies too agressive, can add more options to chooseDir to make the enemies more or less likely to try to move
+            if(chooseDir == 0)      // for now, 50% chance to move up or down, but will happen every turn
+            {
+                yDir = target.position.y > transform.position.y ? 1 : -1;   // move up if the player is above the enemy, down if player is below
+            }
+            else                    // add a condition here for other options of chooseDir to try to move or not
+            {
+                xDir = target.position.x > transform.position.x ? 1 : -1;   // move left if the player is to the left of the enemy, right if to the right
+            }
+        }
+
+        // old implementation for direction choosing was to randomly try up or down first, but sometimes no movement occurred
+        // new movement is more agressive and will require the player to use walls to block the enemies       
 
         AttemptMove<Player>(xDir, yDir);        // try to move towards the player by passing in the Player as the parameter
     }
