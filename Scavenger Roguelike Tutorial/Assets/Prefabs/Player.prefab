@@ -111,6 +111,14 @@ MonoBehaviour:
   pointsPerFood: 10
   pointsPerSoda: 20
   restartLevelDelay: 1
+  foodText: {fileID: 0}
+  moveSound1: {fileID: 0}
+  moveSound2: {fileID: 0}
+  eatSound1: {fileID: 0}
+  eatSound2: {fileID: 0}
+  drinkSound1: {fileID: 0}
+  drinkSound2: {fileID: 0}
+  gameOverSound: {fileID: 0}
 --- !u!212 &212000012901853468
 SpriteRenderer:
   m_ObjectHideFlags: 1

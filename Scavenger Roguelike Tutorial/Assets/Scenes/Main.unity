@@ -837,6 +837,11 @@ Prefab:
       propertyPath: gameOverSound
       value: 
       objectReference: {fileID: 8300000, guid: e2beefeb2273f4efe992adf5b8d67c29, type: 3}
+    - target: {fileID: 212000012901853468, guid: 1bffc3f346ee25b478d035c4b407f7d5,
+        type: 2}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1bffc3f346ee25b478d035c4b407f7d5, type: 2}
   m_IsPrefabParent: 0

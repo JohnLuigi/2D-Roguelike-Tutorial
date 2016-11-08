@@ -27,6 +27,7 @@ public class Player : MovingObject {
     public AudioClip gameOverSound;
 
     private Animator animator;      // this will store a reference to our animator component
+    private SpriteRenderer spriteRenderer;  // this will store a reference to the player's SpriteRenderer
 
     private int food;       // this will store the player's score during the level before passing it back to the GameManager as we change levels
 
@@ -42,6 +43,7 @@ public class Player : MovingObject {
 	protected override void Start ()
     {
         animator = GetComponent<Animator>();        //get a reference to our Animator component
+        spriteRenderer = GetComponent<SpriteRenderer>();    // set the reference to the SpriteRenderer component
 
         food = GameManager.instance.playerFoodPoints;       // set food to be the value stored in GameManager
                                                             // this is so that the Player script can manage the food score during a level
@@ -129,11 +131,29 @@ public class Player : MovingObject {
 
         // check if we have a non-zero value for horizontal or vertical
         // if we do, meaning we are attempting to move, call the AttemptMove function
+        // TODO: Try different AttemptMove<T> with passing in enemies in addition to walls
         if (horizontal != 0 || vertical != 0)
-            AttemptMove<Wall> (horizontal, vertical);       // pass in the generic parameter wall, meaning it is a component the player can interact with
-                                                            // also pass in the horizontal and vertical values which is going to be the direction the...
-                                                            // ...player is trying to move in
-	}
+        {
+            
+            if(horizontal == -1)                    // here, we want to check if the player is moving left into an object, and flip the sprite accordingly
+            {
+                spriteRenderer.flipX = true;        // flip the sprite to face left when moving left or breaking the wall              
+            }
+            else if (horizontal == 1)       // the player has changed to a right-wards movement, so keep the player facing right
+            {
+                spriteRenderer.flipX = false;       // keep the sprite facing right, which is the default flip(aka not flipped)
+                
+            }
+
+            //TODO: change the vertical orientation here later
+
+            AttemptMove<Wall>(horizontal, vertical);       // pass in the generic parameter wall, meaning it is a component the player can interact with
+                                                           // also pass in the horizontal and vertical values which is going to be the direction the
+                                                           // player is trying to move in
+
+        }
+
+    }
 
     // we use procted and override because this attemptMove implementation is different than the original MovingObject Script
     protected override void AttemptMove <T> (int xDir, int yDir)
