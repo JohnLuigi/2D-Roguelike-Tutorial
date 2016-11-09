@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;      // this will allow us to use the SceneMa
 public class Player : MovingObject {
 
     public int wallDamage = 1;      // wallDamage is the damage the player is going to apply to the wall when they chop a wall
+    public int enemyDamage = 1;     // the damage the player does to an enemy, basically how many times they have to hit the enemy to kill it
 
     public int pointsPerFood = 10;      // these two values are going to be the number of points added to the player's score when they pick up these objects
     public int pointsPerSoda = 20;
@@ -150,6 +151,10 @@ public class Player : MovingObject {
             AttemptMove<Wall>(horizontal, vertical);       // pass in the generic parameter wall, meaning it is a component the player can interact with
                                                            // also pass in the horizontal and vertical values which is going to be the direction the
                                                            // player is trying to move in
+            
+            //TODO: make it so AttemptMove only happens once, instead of calling it 2 times for different interaction types
+            AttemptMove<Enemy>(horizontal, vertical);       // pass in the paramter enemy to see if the palyer tried to move into an enemy
+                                                            // and therefore tried to attack it
 
         }
 
@@ -209,11 +214,21 @@ public class Player : MovingObject {
 
     // Player implementation for OnCantMove, which was declared in the MovingObject script without any implementation
     // we want the player to take an action if they are trying to move into a space where there is a wall and they are blocked by it
+    // OR, the player can attack an enemy if they try to move into the enemy and thus deal damage to it (while also taking damage from the enemy themselves)
     protected override void OnCantMove <T> (T component)
     {
-        Wall hitWall = component as Wall;       // casting the component parameter to a Wall type
-        hitWall.DamageWall(wallDamage);     // pass in the variable wallDamage for how much damage the player is going to do to the wall
-        animator.SetTrigger("playerChop");      // set the playerChop trigger of our animator component we stored a reference to earlier
+        if(typeof(T) == typeof(Wall))               // if the player tries to move into a wall, damage the wall
+        {
+            Wall hitWall = component as Wall;       // casting the component parameter to a Wall type
+            hitWall.DamageWall(wallDamage);         // pass in the variable wallDamage for how much damage the player is going to do to the wall
+            animator.SetTrigger("playerChop");      // set the playerChop trigger of our animator component we stored a reference to earlier
+        }
+        else if(typeof(T) == typeof(Enemy))         // if the player tries to move into an enemy, damage the enemy
+        {
+            Enemy hitEnemy = component as Enemy;    // casting the component paramater to Enemy type
+            hitEnemy.DamageEnemy(enemyDamage);                 // damage the enemy fir enemyDamage amount
+            animator.SetTrigger("playerChop");      // set the playerChop trigger of the Player object's animator
+        }        
     }
 
     // reload the level if the player collides with the exit object, meaning that we are going to the next level

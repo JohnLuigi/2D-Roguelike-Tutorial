@@ -107,9 +107,13 @@ MonoBehaviour:
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
-  playerDamage: 20
+  playerDamage: 5
+  enemyHealth: 3
   enemyAttack1: {fileID: 8300000, guid: 0db8cac2749584a009540aa5671ee80d, type: 3}
   enemyAttack2: {fileID: 8300000, guid: 114514a3b3697484ebaa08f7fbf842d3, type: 3}
+  hitSound1: {fileID: 8300000, guid: 4c2332bc8245b474dad63074059bb755, type: 3}
+  hitSound2: {fileID: 8300000, guid: f6aaac83be9e0493493aace800b76619, type: 3}
+  enemyDeathSound: {fileID: 8300000, guid: e2beefeb2273f4efe992adf5b8d67c29, type: 3}
 --- !u!212 &212000011084431576
 SpriteRenderer:
   m_ObjectHideFlags: 1

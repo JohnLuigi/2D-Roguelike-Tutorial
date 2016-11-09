@@ -9,6 +9,8 @@ public class Enemy : MovingObject {
                                     // enemy1 will do 10 damage, and enemy2 will do 20 damage
                                     // this will give us a stronger and a weaker enemy to keep things more interesting
 
+    public int enemyHealth;         // this is the health that the enemy unit has. It will take the player enemyHealth number of hits to kill an enemy
+
     private Animator animator;      // the animator that will control the enemy
     private Transform target;       // will store the player's position here, the enemy will try to move towards this, aka the player
     private bool skipMove;          // this will cause the enemy to move every other turn as opposed to every turn
@@ -17,8 +19,16 @@ public class Enemy : MovingObject {
     public AudioClip enemyAttack1;
     public AudioClip enemyAttack2;
 
-	// add protected override to use a different implementation than that of MovingObject
-	protected override void Start () {
+    // the two audio clips to be chosen from when a player attacks a wall
+    // TODO: Make this more of a hitting flesh sound
+    public AudioClip hitSound1;
+    public AudioClip hitSound2;
+
+    // sound to play when this enemy dies
+    public AudioClip enemyDeathSound;
+
+    // add protected override to use a different implementation than that of MovingObject
+    protected override void Start () {
 
         GameManager.instance.AddEnemyToList(this);      // have this enemy add itself to the list of enemies in the GameManager
         animator = GetComponent<Animator>();        // get and store a component reference to our animator
@@ -99,8 +109,10 @@ public class Enemy : MovingObject {
     // OnCantMove is called if the enemy attempts to move into a space occupied by the player
     // it overrides the OnCantMove function of MovingObject, which was implemented as abstract (aka only implemented by its child class)
     // it takes in the generic parameter T which we use to pass in the component we expect to encounter, which in this case is the player object
+    // TODO: Add a condition for passing in a wall that the enemy tries to move into but cannot
     protected override void OnCantMove <T> (T component)
     {
+        // TODO: Add the check for the wall type here
         Player hitPlayer = component as Player;     // this will be the passed in component which we will cast to a player class
 
         // use setTrigger to set the enemy attack trigger in the animator controller when it collides with the player
@@ -110,6 +122,27 @@ public class Enemy : MovingObject {
 
         // call the lose food function from the Player class with the playerDamage from above to subtract the amount of food points from the player
         hitPlayer.LoseFood(playerDamage);
+    }
+
+    // deal damage to the enemy and reduce enemyHealth. If the enemy drops to zero or below, get rid of the enemy
+    public void DamageEnemy(int damageTaken)
+    {
+        SoundManager.instance.RandomizeSfx(hitSound1, hitSound2);     // randomly choose and then play one of the two enemy being hit sound effects
+
+        // TODO: Make a sprite for the enemy being hit
+        // set the sprite of our spriteRenderer to our damaged sprite
+        // this gives the visual feedback that they've successfully attacked the enemy
+        // spriteRenderer.sprite = dmgSprite;
+
+        enemyHealth -= damageTaken;     // deal the damage to the enemy by subtracting loss from the health of the wall
+
+        // if the health is less than or equal to 0, disable this enemy
+        if (enemyHealth <= 0)
+        {
+            SoundManager.instance.PlaySingle(enemyDeathSound);        // play the enemy dying sound once
+
+            Destroy(gameObject);                             // destroy the enemy
+        }   
     }
 
 }

@@ -151,10 +151,13 @@ public class GameManager : MonoBehaviour {
         // for loop to loop through our enemies list
         for(int i = 0; i < enemies.Count; i++)
         {
-            
-            enemies[i].MoveEnemy();     // issue the move enemy command to each of the enemies in the list            
-            yield return new WaitForSeconds(enemies[i].moveTime);       // wait after each enemy move using yield, using the move time saved for each of
-                                                                        // the enemies
+            if (enemies[i] != null)     // only try to move this enemy if it exists, aka don't try to move enemies that have been destroyed
+            {
+                enemies[i].MoveEnemy();     // issue the move enemy command to each of the enemies in the list            
+                yield return new WaitForSeconds(enemies[i].moveTime);       // wait after each enemy move using yield, using the move time saved for each of
+                                                                            // the enemies
+            }
+
         }
 
         // now that all enemies have moved, let the player be able to move and the enemies not be able to move
