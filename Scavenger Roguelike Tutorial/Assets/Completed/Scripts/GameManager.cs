@@ -53,6 +53,8 @@ namespace Completed
 			InitGame();
 		}
 		
+        // Commenting this out so that the error stops showing up in the editor.
+        /*
 		//This is called each time a scene is loaded.
 		void OnLevelWasLoaded(int index)
 		{
@@ -61,6 +63,7 @@ namespace Completed
 			//Call InitGame to initialize our level.
 			InitGame();
 		}
+        */
 		
 		//Initializes the game for each level.
 		void InitGame()

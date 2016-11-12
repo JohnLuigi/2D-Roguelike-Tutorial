@@ -12,7 +12,9 @@ public class Enemy : MovingObject {
     public int enemyHealth;         // this is the health that the enemy unit has. It will take the player enemyHealth number of hits to kill an enemy
 
     private Animator animator;      // the animator that will control the enemy
+
     private Transform target;       // will store the player's position here, the enemy will try to move towards this, aka the player
+
     private bool skipMove;          // this will cause the enemy to move every other turn as opposed to every turn
 
     // references to the two audio clips for the enemies to use when attacking the player
@@ -26,6 +28,8 @@ public class Enemy : MovingObject {
 
     // sound to play when this enemy dies
     public AudioClip enemyDeathSound;
+
+    
 
     // add protected override to use a different implementation than that of MovingObject
     protected override void Start () {
@@ -127,7 +131,11 @@ public class Enemy : MovingObject {
     // deal damage to the enemy and reduce enemyHealth. If the enemy drops to zero or below, get rid of the enemy
     public void DamageEnemy(int damageTaken)
     {
-        SoundManager.instance.RandomizeSfx(hitSound1, hitSound2);     // randomly choose and then play one of the two enemy being hit sound effects
+        // example of playing audio for an object after it is destroyed
+        if(enemyHealth == 1)        // if the enemy will die after this hit, play a sound that will continue after the enemy dies
+            AudioSource.PlayClipAtPoint(enemyDeathSound, Camera.main.transform.position);     // play the enemy dying sound
+        else
+            SoundManager.instance.RandomizeSfx(hitSound1, hitSound2);     // randomly choose and then play one of the two enemy being hit sound effects
 
         // TODO: Make a sprite for the enemy being hit
         // set the sprite of our spriteRenderer to our damaged sprite
@@ -139,9 +147,7 @@ public class Enemy : MovingObject {
         // if the health is less than or equal to 0, disable this enemy
         if (enemyHealth <= 0)
         {
-            SoundManager.instance.PlaySingle(enemyDeathSound);        // play the enemy dying sound once
-
-            Destroy(gameObject);                             // destroy the enemy
+            Destroy(gameObject);        // destroy this gameObject so the GameManager doesn't try to use it again later
         }   
     }
 

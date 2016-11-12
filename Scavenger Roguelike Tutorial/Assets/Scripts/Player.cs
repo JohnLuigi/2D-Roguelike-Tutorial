@@ -32,16 +32,19 @@ public class Player : MovingObject {
 
     private int food;       // this will store the player's score during the level before passing it back to the GameManager as we change levels
 
-    // touchscreen code
+    // We are disabling the warning for this variable since it is assigned, but only when code for touchscreens is being used.
+    // We are mostly debugging in the unity editor, so the value never gets assigned and the warning shows up, so I'm disabling the warning for just this
+    #pragma warning disable 0414
     private Vector2 touchOrigin = -Vector2.one;     // this will record where the player's finger started touching the touchscreen
                                                     // it is initialized to -Vector2.one which is a position off the screen
                                                     // this means that the conditional that is is going to check and see if there has been any..
                                                     // .. touch input will initally evaluate to false until there is actually a touch input to change..
                                                     // ..touchOrigin
+    #pragma warning restore 0414
 
-	// We add the keywords protected and override because we are going to have a different implementation for Start() in the player class than..
+    // We add the keywords protected and override because we are going to have a different implementation for Start() in the player class than..
     // .. we have in the Moving Object class
-	protected override void Start ()
+    protected override void Start ()
     {
         animator = GetComponent<Animator>();        //get a reference to our Animator component
         spriteRenderer = GetComponent<SpriteRenderer>();    // set the reference to the SpriteRenderer component

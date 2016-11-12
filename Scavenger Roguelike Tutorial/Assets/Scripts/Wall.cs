@@ -11,20 +11,24 @@ public class Wall : MonoBehaviour {
     public AudioClip chopSound1;
     public AudioClip chopSound2;
 
+    // references to this enemy's sprite renderer, it's box collider, and rigidbody2d
     private SpriteRenderer spriteRenderer;
 
 
-	void Awake ()
+    void Awake ()
     {
 
-        // get and store a reference to our Sprite Renderer in spriteRenderer
+        // get and store a reference to our Sprite Renderer
         spriteRenderer = GetComponent<SpriteRenderer>();
-	}
+    }
 
     public void DamageWall (int loss)
-    {
-        SoundManager.instance.RandomizeSfx(chopSound1, chopSound2);     // randomly choose and then play one of the two chopping sound effects
-
+    {        
+        if(hp == 1)             // if the wall will die in one hit, play a sound that will continue after it is destroyed
+            AudioSource.PlayClipAtPoint(chopSound1, Camera.main.transform.position);     // play the chopping sound effect        
+        else        // otherwise play the audio normally
+            SoundManager.instance.RandomizeSfx(chopSound1, chopSound2);     // randomly choose one of the chopping sound effects
+        
         // set the sprite of our spriteRenderer to our damaged sprite
         // this gives the visual feedback that they've successfully attacked the wall
         spriteRenderer.sprite = dmgSprite;
@@ -33,8 +37,8 @@ public class Wall : MonoBehaviour {
 
         // if the health is less than or equal to 0, disable the wall
         if (hp <= 0)
+        {
             gameObject.SetActive(false);
-
-
+        }
     }
 }
