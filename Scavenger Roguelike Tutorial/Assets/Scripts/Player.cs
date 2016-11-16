@@ -26,6 +26,7 @@ public class Player : MovingObject {
     public AudioClip drinkSound1;
     public AudioClip drinkSound2;
     public AudioClip gameOverSound;
+    public AudioClip exitSound;
 
     private Animator animator;      // this will store a reference to our animator component
     private SpriteRenderer spriteRenderer;  // this will store a reference to the player's SpriteRenderer
@@ -194,8 +195,9 @@ public class Player : MovingObject {
         // check the tag of the other object we collided with, invoke the declared Restart() function
         if (other.tag == "Exit")
         {
-            Invoke("Restart", restartLevelDelay);       // include the delay so that we can call that function one second after the trigger
-                                                        // causing a 1 second pause, then the restart of the level
+            AudioSource.PlayClipAtPoint(exitSound, Camera.main.transform.position);     // play the level exiting footsteps sound
+            Invoke("Restart", exitSound.length);        // include the delay so that we can call that function one second after the trigger
+                                                        // causing a pause the length of the exit sound, then the restart of the level
             enabled = false;        // since the level is over, set the player to not be enabled
         }
         else if (other.tag == "Food")       // if the collided object is food:
