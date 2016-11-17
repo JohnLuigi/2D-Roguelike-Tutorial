@@ -94,7 +94,7 @@ public class Player : MovingObject {
         // this is to we are constrained to moving on a grid one direction at a time
         // prevents the player from moving diagonallys
         if (horizontal != 0)
-            vertical = 0;
+            vertical = 0;        
         // end of the keyboard-based code
     #else   // the code for other platforms, aka iPhone, android, windows phone
             // example of touch input code
@@ -152,14 +152,17 @@ public class Player : MovingObject {
 
             //TODO: change the vertical orientation here later
 
-            AttemptMove<Wall>(horizontal, vertical);       // pass in the generic parameter wall, meaning it is a component the player can interact with
-                                                           // also pass in the horizontal and vertical values which is going to be the direction the
-                                                           // player is trying to move in
-            
-            //TODO: make it so AttemptMove only happens once, instead of calling it 2 times for different interaction types
-            AttemptMove<Enemy>(horizontal, vertical);       // pass in the paramter enemy to see if the palyer tried to move into an enemy
-                                                            // and therefore tried to attack it
+            // try to move the player, unless it is in the restart prompt in which case the playerCanMove is false and thus we won't try to move
+            if(GameManager.instance.playerCanMove)
+            {
+                AttemptMove<Wall>(horizontal, vertical);       // pass in the generic parameter wall, meaning it is a component the player can interact with
+                                                               // also pass in the horizontal and vertical values which is going to be the direction the
+                                                               // player is trying to move in
 
+                //TODO: make it so AttemptMove only happens once, instead of calling it 2 times for different interaction types
+                AttemptMove<Enemy>(horizontal, vertical);       // pass in the paramter enemy to see if the palyer tried to move into an enemy
+                                                                // and therefore tried to attack it
+            }
         }
 
     }
@@ -196,6 +199,7 @@ public class Player : MovingObject {
         if (other.tag == "Exit")
         {
             AudioSource.PlayClipAtPoint(exitSound, Camera.main.transform.position);     // play the level exiting footsteps sound
+            // example of starting a function after a delay
             Invoke("Restart", exitSound.length);        // include the delay so that we can call that function one second after the trigger
                                                         // causing a pause the length of the exit sound, then the restart of the level
             enabled = false;        // since the level is over, set the player to not be enabled
@@ -266,5 +270,11 @@ public class Player : MovingObject {
             SoundManager.instance.musicSource.Stop();       // stop the looping music playing on our music source
             GameManager.instance.GameOver();        // if we reached the game ending condition, call GameOver from the GameManager            
         }
+    }
+
+    // upon starting a new game, reset the player's food to 100
+    public void ResetHealth()
+    {
+        food = 100;
     }
 }

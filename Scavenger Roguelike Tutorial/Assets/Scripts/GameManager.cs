@@ -31,6 +31,16 @@ public class GameManager : MonoBehaviour {
     private bool enemiesMoving;     // used to determine if the enemies should be moving or not
     private bool doingSetup;        // this will check if we are setting up the board and prevent the palyer from moving during setup
 
+    public bool gameEnded = false;          // This will be used to check if the game is in the game over state after the player has died, and can either
+                                            // close the game or start over from the beginning
+    private Text yesText;       // These will store references to the yes or no at the end of the game to let the player choose to restart or not
+    private Text noText;
+    private float restartPromptDelay = 3f;   // the default delay for the try again prompt to appear after the survived message appears
+    public bool yesChosen = true;       // The default is to have "Yes" to restart chosen, if it is false, then "No" has bene highlighted.
+
+    public bool playerCanMove = true;   // this will allow us to stop the player from moving during the restart prompt screen
+    
+
 	// Use this for initialization
     // use awake so that it runs before any other start scripts in the game
 	void Awake () {
@@ -84,6 +94,10 @@ public class GameManager : MonoBehaviour {
         levelText = GameObject.Find("LevelText").GetComponent<Text>();       // set the referene to the text object, which is a component of the
                                                                              // object in the hierarchy with the same name
         levelText.text = "Day " + level;        // set the level text to be the stored level number
+        yesText = GameObject.Find("YesText").GetComponent<Text>();      // set the reference to the yes Text
+        yesText.text = "";                                              // set the yes text to be blank so nothing is visible
+        noText = GameObject.Find("NoText").GetComponent<Text>();        // set the reference to the no text
+        noText.text = "";                                               // set the no text to be blank so nothing is visible
         levelImage.SetActive(true);     // make the black image visible
 
         // example of using a funciton with a delay
@@ -111,11 +125,61 @@ public class GameManager : MonoBehaviour {
     {
         levelText.text = "After " + level + " days, you starved.";      // display text showing the lsat level as how long you survived
         levelImage.SetActive(true);     // enable the black background
-        enabled = false;        // when the game ends, the GameManager is disabled
+        playerCanMove = false;
+        Invoke("RestartPrompt", restartPromptDelay);  // wait for seconds until the player can make any changes and either restart or quit
+        gameEnded = true;   // set the tracker for the game's over status to true to allow the player to make a choice to end or not
     }
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (gameEnded)       // if the game has ended, allow the player to choose to start over or close the game
+        {
+            // these two values will store the direction we are selecting, either as a 1 or a -1 along the horizontal and vertical axes
+            int horizontal = 0;
+
+            horizontal = (int)Input.GetAxisRaw("Horizontal");   // this will allow us to use this with keyboard and later on touch screen input
+
+            // set whether Yes is chosen or not based on the keyboard input            
+            if (horizontal == 1)     // if the player presed right, "No" was chosen in the restart menu
+                yesChosen = false;
+            else if (horizontal == -1)   // the player pressed left, choosing "Yes" to continue            
+                yesChosen = true;
+
+            // update the color of yes or no depending on which is chosen
+            if (yesChosen)   // if yes is chosen, make the "No" text gray and the "Yes" text white
+            {
+                yesText.color = Color.white;
+                noText.color = Color.gray;
+            }
+            else            // otherwhise, no is chosen so make "Yes" gray and "No" white
+            {
+                yesText.color = Color.gray;
+                noText.color = Color.white;
+            }
+
+            // if the player presses enter in the restart prompt screen
+            if ( Input.GetKey("enter") || Input.GetKey("return") )
+            {
+                if(yesChosen)           // restart the game
+                {
+                    level = 0;                  // the level to start again on is 0
+                    playerFoodPoints = 100;     // reset the player's food(health) back to 100
+                    Player thePlayer = GameObject.Find("Player").GetComponent<Player>();
+                    thePlayer.ResetHealth();
+                    playerCanMove = true;       // allow the player to be able to move again
+                    SoundManager.instance.musicSource.Play();       // reenable the looping music playing on our music source
+                    SceneManager.LoadScene(0);  // reload the Main scene, in this case the only scene
+                }
+                else                    // close the program
+                {
+                    Application.Quit();
+                    #if UNITY_EDITOR
+                    UnityEditor.EditorApplication.isPlaying = false;
+                    #endif
+                }
+            }
+        }
 
         // check if it is the player's turn or if the enemies are already moving or if the level is being initiated with the title card showing
         if (playersTurn || enemiesMoving || doingSetup)
@@ -123,7 +187,19 @@ public class GameManager : MonoBehaviour {
 
         // if it is not the players turn and the enemies have not started moving yet, start the coroutine to move the enemies
         StartCoroutine(MoveEnemies());
-	}
+
+        
+    }
+
+    // This function will be called with a delay after the "you survived for X days" message appears.
+    // It will make the "Try again?", Yes, and No option visible to the player.
+    public void RestartPrompt()
+    {   
+        // set the three text objects to their new respective texts for the restart prompt
+        levelText.text = "Try Again?";
+        yesText.text = "Yes";
+        noText.text = "No";
+    }
 
     // this takes a parameter of the type Enemy called script
     // will use this to have enemies register themselves with this GameManager so that this GameManager can issue move orders to them
