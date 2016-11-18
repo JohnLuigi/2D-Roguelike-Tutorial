@@ -31,15 +31,19 @@ public class GameManager : MonoBehaviour {
     private bool enemiesMoving;     // used to determine if the enemies should be moving or not
     private bool doingSetup;        // this will check if we are setting up the board and prevent the palyer from moving during setup
 
+    [HideInInspector]
     public bool gameEnded = false;          // This will be used to check if the game is in the game over state after the player has died, and can either
                                             // close the game or start over from the beginning
     private Text yesText;       // These will store references to the yes or no at the end of the game to let the player choose to restart or not
     private Text noText;
     private float restartPromptDelay = 3f;   // the default delay for the try again prompt to appear after the survived message appears
+    [HideInInspector]
     public bool yesChosen = true;       // The default is to have "Yes" to restart chosen, if it is false, then "No" has bene highlighted.
 
+    [HideInInspector]
     public bool playerCanMove = true;   // this will allow us to stop the player from moving during the restart prompt screen
-    
+    [HideInInspector]
+    public bool gamePaused = false;     // This boolean tracks if the game is currently paused or not.
 
 	// Use this for initialization
     // use awake so that it runs before any other start scripts in the game
@@ -163,13 +167,7 @@ public class GameManager : MonoBehaviour {
             {
                 if(yesChosen)           // restart the game
                 {
-                    level = 0;                  // the level to start again on is 0
-                    playerFoodPoints = 100;     // reset the player's food(health) back to 100
-                    Player thePlayer = GameObject.Find("Player").GetComponent<Player>();
-                    thePlayer.ResetHealth();
-                    playerCanMove = true;       // allow the player to be able to move again
-                    SoundManager.instance.musicSource.Play();       // reenable the looping music playing on our music source
-                    SceneManager.LoadScene(0);  // reload the Main scene, in this case the only scene
+                    ResetGame();    // call the reset game function to reset the necessary values to start over from scratch
                 }
                 else                    // close the program
                 {
@@ -181,6 +179,40 @@ public class GameManager : MonoBehaviour {
             }
         }
 
+        // If the player has pressed the escape key, the game shoudl pause or unpause accordingly
+        if (Input.GetKeyUp("escape"))
+        {
+            if(gamePaused)      // if the player presses escape while the game is paused, resume the game
+            {
+                // reset the black background's opacity to 100%
+                Image tempImage = levelImage.GetComponent<Image>();  // get the image component of the level image
+                Color c = tempImage.color;          // set the temporary color to be that of levelImage's
+                c.a = 1f;                         // make this color have 50% alhpa value (aka opacity)
+                tempImage.color = c;                // set the levelImage's color to be this 50% opacity black
+                levelImage.SetActive(false);        // hide the black background and thus also hide the paused text
+
+                SoundManager.instance.musicSource.volume = 0.7f;    // reset the game's volume back to it's original level
+                playerCanMove = true;
+                gamePaused = false;         // set the game's status to be unpaused
+                Time.timeScale = 1.0f;   // resume the game by setting the time scale back to 1
+            }
+            else                // the player pressed escape while the game is not paused, so resume the game
+            {
+                levelText.text = "PAUSED";      // set the text to be shown as PAUSED
+                // set the black background image to 50% opacity
+                Image tempImage= levelImage.GetComponent<Image>();  // get the image component of the level image
+                Color c = tempImage.color;      // set the temporary color to be that of levelImage's
+                c.a = 0.5f;                // make this color have 50% alhpa value (aka opacity)
+                tempImage.color = c;            // set the levelImage's color to be this 50% opacity black
+                levelImage.SetActive(true);     // make the black background visible
+
+                SoundManager.instance.musicSource.volume = 0.20f;   // reduce the game's volume to 50% of it's defualt during a pause
+                playerCanMove = false;
+                gamePaused = true;      // set the game's status to become paused
+                Time.timeScale = 0.0f;  // pause the game  by setting the timeScale to 0
+            }            
+        }
+
         // check if it is the player's turn or if the enemies are already moving or if the level is being initiated with the title card showing
         if (playersTurn || enemiesMoving || doingSetup)
             return;     // do nothing for this update loop since the player cannot move and the enemies already started their movement
@@ -189,6 +221,19 @@ public class GameManager : MonoBehaviour {
         StartCoroutine(MoveEnemies());
 
         
+    }
+
+    // the steps to take in order to reset the game back to the initial starting conditions
+    public void ResetGame()
+    {
+        yesChosen = true;           // reset the yesChosen to true so that on the next game over screen, yes is once again the default
+        level = 0;                  // the level to start again on is 0
+        playerFoodPoints = 100;     // reset the player's food(health) back to 100
+        Player thePlayer = GameObject.Find("Player").GetComponent<Player>();
+        thePlayer.ResetHealth();
+        playerCanMove = true;       // allow the player to be able to move again
+        SoundManager.instance.musicSource.Play();       // reenable the looping music playing on our music source
+        SceneManager.LoadScene(0);  // reload the Main scene, in this case the only scene
     }
 
     // This function will be called with a delay after the "you survived for X days" message appears.

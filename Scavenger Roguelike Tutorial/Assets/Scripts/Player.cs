@@ -94,9 +94,9 @@ public class Player : MovingObject {
         // this is to we are constrained to moving on a grid one direction at a time
         // prevents the player from moving diagonallys
         if (horizontal != 0)
-            vertical = 0;        
+            vertical = 0;
         // end of the keyboard-based code
-    #else   // the code for other platforms, aka iPhone, android, windows phone
+#else   // the code for other platforms, aka iPhone, android, windows phone
             // example of touch input code
 
         if (Input.touchCount > 0)       // if the input system has registered one or more touches,
@@ -132,29 +132,30 @@ public class Player : MovingObject {
             }
         }
 
-    #endif      // end of the mobile code
+#endif      // end of the mobile code
 
         // check if we have a non-zero value for horizontal or vertical
         // if we do, meaning we are attempting to move, call the AttemptMove function
         // TODO: Try different AttemptMove<T> with passing in enemies in addition to walls
-        if (horizontal != 0 || vertical != 0)
+        if (GameManager.instance.playerCanMove)
         {
-            
-            if(horizontal == -1)                    // here, we want to check if the player is moving left into an object, and flip the sprite accordingly
+            if (horizontal != 0 || vertical != 0)
             {
-                spriteRenderer.flipX = true;        // flip the sprite to face left when moving left or breaking the wall              
-            }
-            else if (horizontal == 1)       // the player has changed to a right-wards movement, so keep the player facing right
-            {
-                spriteRenderer.flipX = false;       // keep the sprite facing right, which is the default flip(aka not flipped)
-                
-            }
 
-            //TODO: change the vertical orientation here later
+                if (horizontal == -1)                    // here, we want to check if the player is moving left into an object, and flip the sprite accordingly
+                {
+                    spriteRenderer.flipX = true;        // flip the sprite to face left when moving left or breaking the wall              
+                }
+                else if (horizontal == 1)       // the player has changed to a right-wards movement, so keep the player facing right
+                {
+                    spriteRenderer.flipX = false;       // keep the sprite facing right, which is the default flip(aka not flipped)
 
-            // try to move the player, unless it is in the restart prompt in which case the playerCanMove is false and thus we won't try to move
-            if(GameManager.instance.playerCanMove)
-            {
+                }
+
+                //TODO: change the vertical orientation here later
+
+                // try to move the player, unless it is in the restart prompt in which case the playerCanMove is false and thus we won't try to move
+
                 AttemptMove<Wall>(horizontal, vertical);       // pass in the generic parameter wall, meaning it is a component the player can interact with
                                                                // also pass in the horizontal and vertical values which is going to be the direction the
                                                                // player is trying to move in
@@ -162,9 +163,9 @@ public class Player : MovingObject {
                 //TODO: make it so AttemptMove only happens once, instead of calling it 2 times for different interaction types
                 AttemptMove<Enemy>(horizontal, vertical);       // pass in the paramter enemy to see if the palyer tried to move into an enemy
                                                                 // and therefore tried to attack it
+
             }
         }
-
     }
 
     // we use procted and override because this attemptMove implementation is different than the original MovingObject Script
