@@ -45,6 +45,8 @@ public class GameManager : MonoBehaviour {
     [HideInInspector]
     public bool gamePaused = false;     // This boolean tracks if the game is currently paused or not.
 
+    private GameObject pauseButton;          // The reference to the pause button on touch screen devices
+
 	// Use this for initialization
     // use awake so that it runs before any other start scripts in the game
 	void Awake () {
@@ -61,6 +63,8 @@ public class GameManager : MonoBehaviour {
         enemies = new List<Enemy>();
 
         boardScript = GetComponent<BoardManager>();     // set the board manager script to be the one found in the scene
+
+        pauseButton = GameObject.Find("PauseButton");   // set the reference to the pauseButton
         // no need to run initgame here because we will now call that on the OnLevelFinishedLoading function
         // test code
         //InitGame();     // initializethe game using the function below
@@ -179,39 +183,17 @@ public class GameManager : MonoBehaviour {
             }
         }
 
+        // TODO figure out how to have this code work when using unity remote without taking out "UNITY_EDITOR"
+        #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBPLAYER
+        // disable the pause button so that it does not appear when playing on a computer
+        pauseButton.SetActive(false);
+
         // If the player has pressed the escape key, the game shoudl pause or unpause accordingly
         if (Input.GetKeyUp("escape"))
         {
-            if(gamePaused)      // if the player presses escape while the game is paused, resume the game
-            {
-                // reset the black background's opacity to 100%
-                Image tempImage = levelImage.GetComponent<Image>();  // get the image component of the level image
-                Color c = tempImage.color;          // set the temporary color to be that of levelImage's
-                c.a = 1f;                         // make this color have 50% alhpa value (aka opacity)
-                tempImage.color = c;                // set the levelImage's color to be this 50% opacity black
-                levelImage.SetActive(false);        // hide the black background and thus also hide the paused text
-
-                SoundManager.instance.musicSource.volume = 0.7f;    // reset the game's volume back to it's original level
-                playerCanMove = true;
-                gamePaused = false;         // set the game's status to be unpaused
-                Time.timeScale = 1.0f;   // resume the game by setting the time scale back to 1
-            }
-            else                // the player pressed escape while the game is not paused, so resume the game
-            {
-                levelText.text = "PAUSED";      // set the text to be shown as PAUSED
-                // set the black background image to 50% opacity
-                Image tempImage= levelImage.GetComponent<Image>();  // get the image component of the level image
-                Color c = tempImage.color;      // set the temporary color to be that of levelImage's
-                c.a = 0.5f;                // make this color have 50% alhpa value (aka opacity)
-                tempImage.color = c;            // set the levelImage's color to be this 50% opacity black
-                levelImage.SetActive(true);     // make the black background visible
-
-                SoundManager.instance.musicSource.volume = 0.20f;   // reduce the game's volume to 50% of it's defualt during a pause
-                playerCanMove = false;
-                gamePaused = true;      // set the game's status to become paused
-                Time.timeScale = 0.0f;  // pause the game  by setting the timeScale to 0
-            }            
+            PauseGame();           
         }
+        #endif
 
         // check if it is the player's turn or if the enemies are already moving or if the level is being initiated with the title card showing
         if (playersTurn || enemiesMoving || doingSetup)
@@ -234,6 +216,40 @@ public class GameManager : MonoBehaviour {
         playerCanMove = true;       // allow the player to be able to move again
         SoundManager.instance.musicSource.Play();       // reenable the looping music playing on our music source
         SceneManager.LoadScene(0);  // reload the Main scene, in this case the only scene
+    }
+
+    // code to run to either pause or unpause the game
+    public void PauseGame()
+    {
+        if (gamePaused)      // if the player presses escape while the game is paused, resume the game
+        {
+            // reset the black background's opacity to 100%
+            Image tempImage = levelImage.GetComponent<Image>();  // get the image component of the level image
+            Color c = tempImage.color;          // set the temporary color to be that of levelImage's
+            c.a = 1f;                         // make this color have 50% alhpa value (aka opacity)
+            tempImage.color = c;                // set the levelImage's color to be this 50% opacity black
+            levelImage.SetActive(false);        // hide the black background and thus also hide the paused text
+
+            SoundManager.instance.musicSource.volume = 0.7f;    // reset the game's volume back to it's original level
+            playerCanMove = true;
+            gamePaused = false;         // set the game's status to be unpaused
+            Time.timeScale = 1.0f;   // resume the game by setting the time scale back to 1
+        }
+        else                // the player pressed escape while the game is not paused, so resume the game
+        {
+            levelText.text = "PAUSED";      // set the text to be shown as PAUSED
+                                            // set the black background image to 50% opacity
+            Image tempImage = levelImage.GetComponent<Image>();  // get the image component of the level image
+            Color c = tempImage.color;      // set the temporary color to be that of levelImage's
+            c.a = 0.5f;                // make this color have 50% alhpa value (aka opacity)
+            tempImage.color = c;            // set the levelImage's color to be this 50% opacity black
+            levelImage.SetActive(true);     // make the black background visible
+
+            SoundManager.instance.musicSource.volume = 0.20f;   // reduce the game's volume to 50% of it's defualt during a pause
+            playerCanMove = false;
+            gamePaused = true;      // set the game's status to become paused
+            Time.timeScale = 0.0f;  // pause the game  by setting the timeScale to 0
+        }
     }
 
     // This function will be called with a delay after the "you survived for X days" message appears.

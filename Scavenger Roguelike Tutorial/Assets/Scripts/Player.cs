@@ -278,4 +278,10 @@ public class Player : MovingObject {
     {
         food = 100;
     }
+
+    // function added here to allow the player to run the GameManager's pause game function
+    public void PauseTheGame()
+    {
+        GameManager.instance.PauseGame();
+    }
 }
