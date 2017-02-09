@@ -896,6 +896,7 @@ GameObject:
   - component: {fileID: 1620776584}
   - component: {fileID: 1620776583}
   - component: {fileID: 1620776585}
+  - component: {fileID: 1620776586}
   m_Layer: 5
   m_Name: PauseButton
   m_TagString: PauseButton
@@ -984,6 +985,17 @@ MonoBehaviour:
       m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
         Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   delegates: []
+--- !u!114 &1620776586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1620776581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ed64c2a0dec162408f1a6859a0688db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1902298735
 GameObject:
   m_ObjectHideFlags: 0

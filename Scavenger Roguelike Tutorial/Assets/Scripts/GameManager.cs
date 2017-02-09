@@ -45,8 +45,6 @@ public class GameManager : MonoBehaviour {
     [HideInInspector]
     public bool gamePaused = false;     // This boolean tracks if the game is currently paused or not.
 
-    private GameObject pauseButton;          // The reference to the pause button on touch screen devices
-
 	// Use this for initialization
     // use awake so that it runs before any other start scripts in the game
 	void Awake () {
@@ -64,11 +62,10 @@ public class GameManager : MonoBehaviour {
 
         boardScript = GetComponent<BoardManager>();     // set the board manager script to be the one found in the scene
 
-        pauseButton = GameObject.Find("PauseButton");   // set the reference to the pauseButton
         // no need to run initgame here because we will now call that on the OnLevelFinishedLoading function
         // test code
         //InitGame();     // initializethe game using the function below
-	}
+    }
 
     // Example of performing actions when a scene is loaded, aka when a management script is enabled ot disabled
     // increment the level number when a new level is loaded
@@ -81,7 +78,7 @@ public class GameManager : MonoBehaviour {
 
     // called when this script is enabled
     void OnEnable()
-    {
+    {        
         // tell our OnLevelFinishedLoading function to start listening for a scene change event as soon as this script is enabled
         SceneManager.sceneLoaded += OnLevelFinishedLoading;
     }
@@ -96,7 +93,7 @@ public class GameManager : MonoBehaviour {
 
     // runs at the start of a level
     void InitGame()
-    {
+    {       
         doingSetup = true;      //the player won't be able to move while the title card is up, aka when the board is being made
         levelImage = GameObject.Find("LevelImage");     // set a reference to the black transition image
         levelText = GameObject.Find("LevelText").GetComponent<Text>();       // set the referene to the text object, which is a component of the
@@ -176,24 +173,21 @@ public class GameManager : MonoBehaviour {
                 else                    // close the program
                 {
                     Application.Quit();
-                    #if UNITY_EDITOR
+#if UNITY_EDITOR
                     UnityEditor.EditorApplication.isPlaying = false;
-                    #endif
+#endif
                 }
             }
-        }
+        }       
 
         // TODO figure out how to have this code work when using unity remote without taking out "UNITY_EDITOR"
-        #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBPLAYER
-        // disable the pause button so that it does not appear when playing on a computer
-        pauseButton.SetActive(false);
-
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBPLAYER
         // If the player has pressed the escape key, the game shoudl pause or unpause accordingly
         if (Input.GetKeyUp("escape"))
         {
             PauseGame();           
         }
-        #endif
+#endif
 
         // check if it is the player's turn or if the enemies are already moving or if the level is being initiated with the title card showing
         if (playersTurn || enemiesMoving || doingSetup)
