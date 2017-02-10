@@ -70,15 +70,17 @@ MonoBehaviour:
   - {fileID: 1089271903074310, guid: fdbdf601ed52d164294ad1cdeea5e7cb, type: 2}
   - {fileID: 1247722998001524, guid: ab1b5f6bbbee049469208392a2e426ed, type: 2}
   - {fileID: 1847655694381084, guid: 1b957f077e7adc1418d4fac2ee9f2330, type: 2}
+  - {fileID: 1910485294681522, guid: 47ae8ddd42177fc46b057a39311fd47c, type: 2}
+  - {fileID: 1997402863347866, guid: 26136ba80ae7056478a6bf5f63d18961, type: 2}
   wallTiles:
-  - {fileID: 1000013463487882, guid: bb0acf409d44a7d4e8cb5fc8f78fb815, type: 2}
-  - {fileID: 1000012565841208, guid: 246b11d1b0655c74b92ed3debaf2f5bd, type: 2}
-  - {fileID: 1000013757731972, guid: 201ab5d4a1f46454d93f86c450b9352d, type: 2}
-  - {fileID: 1000013397309724, guid: 50838ae91f3a83c49b0c1d2e639a1814, type: 2}
-  - {fileID: 1000011395601094, guid: cb15231ae75ed2e48ae7dd9000c80740, type: 2}
-  - {fileID: 1000013761968198, guid: 14fc883bd0d64a04fbfbdd9011144f28, type: 2}
-  - {fileID: 1000013762148800, guid: c68b184b38780c8419f0e4c4b3b1cc1a, type: 2}
-  - {fileID: 1000014188948534, guid: 0f0a36feb95efc044ab69baca96aab4d, type: 2}
+  - {fileID: 1065343788245012, guid: b3f5b54e6388d674d8b49c288f243cb9, type: 2}
+  - {fileID: 1039669734081718, guid: 03f2a1c4a012eab45be175552672408e, type: 2}
+  - {fileID: 1565593937533074, guid: 4c3f11702040de74b8e122255028f191, type: 2}
+  - {fileID: 1673153016312452, guid: b03df3cbed5397e42ae3ff2bb0ffc0a1, type: 2}
+  - {fileID: 1905065763394256, guid: 83aac61f7397f9a419e994235e59bc12, type: 2}
+  - {fileID: 1708312009435186, guid: 8da1109ea5863004dab1882962e082f2, type: 2}
+  - {fileID: 1900913778198112, guid: ac89b043e46197d418682a7af06dc8ed, type: 2}
+  - {fileID: 1182489984663570, guid: 5305b7a22cb125a41a7ac08f9138425b, type: 2}
   foodTiles:
   - {fileID: 1000012397249996, guid: 991109a902fe3c641a257630b48b6824, type: 2}
   - {fileID: 1000013959287498, guid: de02993f7ccdf9d428c13389754c2f4b, type: 2}
