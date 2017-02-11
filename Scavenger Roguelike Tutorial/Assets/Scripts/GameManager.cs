@@ -163,20 +163,10 @@ public class GameManager : MonoBehaviour {
                 noText.color = Color.white;
             }
 
-            // if the player presses enter in the restart prompt screen
+            // if the player presses enter in the restart prompt screen, check the state of yesChosen and then quit or restart
             if ( Input.GetKey("enter") || Input.GetKey("return") )
             {
-                if(yesChosen)           // restart the game
-                {
-                    ResetGame();    // call the reset game function to reset the necessary values to start over from scratch
-                }
-                else                    // close the program
-                {
-                    Application.Quit();
-#if UNITY_EDITOR
-                    UnityEditor.EditorApplication.isPlaying = false;
-#endif
-                }
+                ResetOrQuit();
             }
         }       
 
@@ -208,14 +198,35 @@ public class GameManager : MonoBehaviour {
         Player thePlayer = GameObject.Find("Player").GetComponent<Player>();
         thePlayer.ResetHealth();
         playerCanMove = true;       // allow the player to be able to move again
+        gameEnded = false;      // this will allow the player to be able to pause and unpause the game again upon restarting
         SoundManager.instance.musicSource.Play();       // reenable the looping music playing on our music source
         SceneManager.LoadScene(0);  // reload the Main scene, in this case the only scene
+    }
+
+    // Reset the game or quit the application depending on the status of the yesChosen boolean
+    public void ResetOrQuit()
+    {
+        if (yesChosen)           // restart the game
+        {
+            ResetGame();    // call the reset game function to reset the necessary values to start over from scratch
+        }
+        else                    // close the program
+        {
+            Application.Quit();
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
+        }
     }
 
     // code to run to either pause or unpause the game
     public void PauseGame()
     {
-        if (gamePaused)      // if the player presses escape while the game is paused, resume the game
+        if(gameEnded)
+        {
+            // do nothing if the game has ended, so that the player cannot pause or unpause the game while it is on the restart prompt screen
+        }
+        else if (gamePaused)      // if the player presses escape while the game is paused, resume the game
         {
             // reset the black background's opacity to 100%
             Image tempImage = levelImage.GetComponent<Image>();  // get the image component of the level image
@@ -233,6 +244,8 @@ public class GameManager : MonoBehaviour {
         {
             levelText.text = "PAUSED";      // set the text to be shown as PAUSED
                                             // set the black background image to 50% opacity
+            yesText.text = "";      // hide the yes and no text during the pause screen so they can't be clicked on
+            noText.text = "";
             Image tempImage = levelImage.GetComponent<Image>();  // get the image component of the level image
             Color c = tempImage.color;      // set the temporary color to be that of levelImage's
             c.a = 0.5f;                // make this color have 50% alhpa value (aka opacity)

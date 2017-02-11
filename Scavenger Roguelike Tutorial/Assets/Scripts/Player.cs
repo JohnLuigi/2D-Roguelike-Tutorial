@@ -284,4 +284,10 @@ public class Player : MovingObject {
     {
         GameManager.instance.PauseGame();
     }
+
+    // function added here to allow the player object to be able to run the GameManager's pause game function
+    public void ResetOrQuit()
+    {
+        GameManager.instance.ResetOrQuit();
+    }
 }
