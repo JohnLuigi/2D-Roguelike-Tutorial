@@ -231,13 +231,13 @@ public class Player : MovingObject {
         {
             Wall hitWall = component as Wall;       // casting the component parameter to a Wall type
             hitWall.DamageWall(wallDamage);         // pass in the variable wallDamage for how much damage the player is going to do to the wall
-            animator.SetTrigger("playerChop");      // set the playerChop trigger of our animator component we stored a reference to earlier
+            animator.SetTrigger("T_Player_Chop");      // set the T_Player_Chop trigger of our animator component we stored a reference to earlier
         }
         else if(typeof(T) == typeof(Enemy))         // if the player tries to move into an enemy, damage the enemy
         {
             Enemy hitEnemy = component as Enemy;    // casting the component paramater to Enemy type
             hitEnemy.DamageEnemy(enemyDamage);                 // damage the enemy fir enemyDamage amount
-            animator.SetTrigger("playerChop");      // set the playerChop trigger of the Player object's animator
+            animator.SetTrigger("T_Player_Chop");      // set the T_Player_Chop trigger of the Player object's animator
         }        
     }
 
@@ -256,7 +256,7 @@ public class Player : MovingObject {
     public void LoseFood (int loss)
     {
         // first, set the playerHit trigger in our animator
-        animator.SetTrigger("playerHit");
+        animator.SetTrigger("T_Player_Hit");
         food -= loss;       // take away from the player's food total
         foodText.text = "-" + loss + " Food: " + food;      // show the loss of food as a minus next to the food score
         CheckIfGameOver();      // check if the game is over because the player has lost food, so maybe the game has ended

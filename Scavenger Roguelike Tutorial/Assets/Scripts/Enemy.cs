@@ -120,7 +120,7 @@ public class Enemy : MovingObject {
         Player hitPlayer = component as Player;     // this will be the passed in component which we will cast to a player class
 
         // use setTrigger to set the enemy attack trigger in the animator controller when it collides with the player
-        animator.SetTrigger("enemyAttack");
+        animator.SetTrigger("T_Enemy_Attack");
 
         SoundManager.instance.RandomizeSfx(enemyAttack1, enemyAttack2);     // randomly chose one one of the two sound effects and play it
 
