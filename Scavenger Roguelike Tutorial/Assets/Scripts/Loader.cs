@@ -14,4 +14,20 @@ public class Loader : MonoBehaviour {
             Instantiate(gameManager);
 	}
 
+    // change the position of the camera depending on the screen orientation
+    private void Update()
+    {        
+        // if the screen is in a horizontal orientation, change the camera to this
+        if (Screen.orientation == ScreenOrientation.LandscapeLeft || Screen.orientation == ScreenOrientation.LandscapeRight)
+        {
+            Camera.main.transform.position = new Vector3(3.5f, 3.5f, -10f);
+            Camera.main.orthographicSize = 5f;
+        }
+        else            // then the screen is in a vertical orientation, so the camera needs to have these settings
+        {
+            Camera.main.transform.position = new Vector3(3.5f, -0.4f, -10f);
+            Camera.main.orthographicSize = 8.88f;
+        }
+    }
+
 }
