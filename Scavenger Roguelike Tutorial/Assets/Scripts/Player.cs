@@ -149,7 +149,6 @@ public class Player : MovingObject {
                 else if (horizontal == 1)       // the player has changed to a right-wards movement, so keep the player facing right
                 {
                     spriteRenderer.flipX = false;       // keep the sprite facing right, which is the default flip(aka not flipped)
-
                 }
 
                 //TODO: change the vertical orientation here later
@@ -289,5 +288,43 @@ public class Player : MovingObject {
     public void ResetOrQuit()
     {
         GameManager.instance.ResetOrQuit();
+    }
+
+    // the 4 move functions that the dpad buttons will use, up down, left or right
+    public void MoveUp()
+    {
+        if (GameManager.instance.playerCanMove)
+        {            
+            AttemptMove<Wall>(0, 1);
+            AttemptMove<Enemy>(0, 1);
+        }
+            
+    }
+
+    public void MoveDown()
+    {
+        if (GameManager.instance.playerCanMove)
+        {
+            AttemptMove<Wall>(0, -1);
+            AttemptMove<Enemy>(0, -1);
+        }
+    }
+
+    public void MoveLeft()
+    {
+        if (GameManager.instance.playerCanMove)
+        {
+            AttemptMove<Wall>(-1, 0);
+            AttemptMove<Enemy>(-1, 0);
+        }
+    }
+
+    public void MoveRight()
+    {
+        if (GameManager.instance.playerCanMove)
+        {
+            AttemptMove<Wall>(1, 0);
+            AttemptMove<Enemy>(1, 0);
+        }
     }
 }

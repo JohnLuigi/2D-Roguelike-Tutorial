@@ -16,7 +16,7 @@ public class Loader : MonoBehaviour {
 
     // change the position of the camera depending on the screen orientation
     private void Update()
-    {        
+    {
         // if the screen is in a horizontal orientation, change the camera to this
         if (Screen.orientation == ScreenOrientation.LandscapeLeft || Screen.orientation == ScreenOrientation.LandscapeRight)
         {
